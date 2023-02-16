@@ -29,6 +29,8 @@ if (EXISTS ${PICO_CYW43_DRIVER_PATH}/${CYW43_DRIVER_TEST_FILE})
             ${PICO_CYW43_DRIVER_PATH}/src/cyw43_stats.c
             ${PICO_CYW43_DRIVER_PATH}/src/cyw43_lwip.c
             ${PICO_CYW43_DRIVER_PATH}/src/cyw43_ctrl.c
+            ${PICO_CYW43_DRIVER_PATH}/src/cyw43_ctrl.c
+            ${PICO_CYW43_DRIVER_PATH}/src/cyw43_gz_read.c
             )
     target_include_directories(cyw43_driver_headers INTERFACE
             ${PICO_CYW43_DRIVER_PATH}/src
@@ -54,6 +56,7 @@ if (EXISTS ${PICO_CYW43_DRIVER_PATH}/${CYW43_DRIVER_TEST_FILE})
             hardware_pio
             hardware_dma
             hardware_exception
+            pico_uzlib
             )
 
     # Note: This is used by MP, so check for issues when making changes

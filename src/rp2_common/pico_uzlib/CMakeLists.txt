@@ -11,7 +11,7 @@ if (EXISTS ${PICO_UZLIB_PATH}/${UZLIB_TEST_PATH})
 
     pico_register_common_scope_var(PICO_UZLIB_PATH)
 
-    add_library(pico_uzlib INTERFACE)
+    pico_add_library(pico_uzlib)
     target_sources(pico_uzlib INTERFACE
         ${PICO_UZLIB_PATH}/src/tinflate.c
         ${PICO_UZLIB_PATH}/src/tinfgzip.c
@@ -20,7 +20,7 @@ if (EXISTS ${PICO_UZLIB_PATH}/${UZLIB_TEST_PATH})
         ${PICO_UZLIB_PATH}/src/crc32.c
         ${PICO_UZLIB_PATH}/src/defl_static.c
     )
-    target_include_directories(pico_uzlib INTERFACE
+    target_include_directories(pico_uzlib_headers INTERFACE
         ${PICO_UZLIB_PATH}/src
     )
 

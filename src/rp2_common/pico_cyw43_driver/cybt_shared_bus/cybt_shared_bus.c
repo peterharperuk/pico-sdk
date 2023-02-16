@@ -14,7 +14,7 @@
 #include "cyw43_config.h"
 #include "cybt_shared_bus_driver.h"
 
-#include "cyw43_btfw_43439.h"
+#include "firmware_defs.h"
 
 #if CYW43_USE_HEX_BTFW
 extern const char    brcm_patch_version[];
@@ -134,8 +134,8 @@ int cyw43_btbus_init(cyw43_ll_t *self) {
     fw_data_len = brcm_patch_ram_length;
     fw_data_buf = brcm_patchram_buf;
 #else
-    fw_data_len = cyw43_btfw_43439_len;
-    fw_data_buf = cyw43_btfw_43439;
+    fw_data_len = firmware_details.bt_fw_size;
+    fw_data_buf = firmware_details.bt_fw_addr;
 #endif
     ret = cybt_fw_download(fw_data_buf,
                            fw_data_len,
