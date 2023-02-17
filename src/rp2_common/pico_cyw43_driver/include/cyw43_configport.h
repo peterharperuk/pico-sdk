@@ -62,7 +62,7 @@ extern "C" {
 #define CYW43_SPI_PIO 1
 #endif
 
-// Compress firware by default
+// Compress firmware by default
 #ifndef CYW43_ENABLE_FIRMWARE_COMPRESSION
 #define CYW43_ENABLE_FIRMWARE_COMPRESSION 1
 #endif
@@ -88,16 +88,11 @@ extern "C" {
 #endif
 
 #ifndef CYW43_BT_FIRMWARE_INCLUDE_FILE
-#if 0 && CYW43_ENABLE_FIRMWARE_COMPRESSION
+#if CYW43_ENABLE_FIRMWARE_COMPRESSION
 #define CYW43_BT_FIRMWARE_INCLUDE_FILE "cyw43_btfw_43439.gz.h"
 #else
 #define CYW43_BT_FIRMWARE_INCLUDE_FILE "cyw43_btfw_43439.h"
 #endif
-#endif
-
-// This include should define cyw43_firmware_details and cyw43_firmware_funcs
-#ifndef CYW43_FIRMWARE_DETAILS_INCLUDE_FILE
-#define CYW43_FIRMWARE_DETAILS_INCLUDE_FILE "firmware_details_43439.h"
 #endif
 
 // Note, these are negated, because cyw43_driver negates them before returning!
