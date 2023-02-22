@@ -265,7 +265,7 @@ static void cybt_fw_get_bytes(uint8_t *dst, const uint8_t **addr, uint8_t count)
 #if CYW43_USE_HEX_BTFW
     memcpy(dst, *addr, count);
 #else
-    const uint8_t *data = cyw43_firmware_funcs()->get_bt_fw(*addr, count, dst, count);
+    const uint8_t *data = cyw43_get_firmware_funcs()->get_bt_fw(*addr, count, dst, count);
     if (data != dst) {
         memcpy(dst, data, count);
     }

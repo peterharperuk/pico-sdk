@@ -133,10 +133,10 @@ int cyw43_btbus_init(cyw43_ll_t *self) {
     fw_data_len = brcm_patch_ram_length;
     fw_data_buf = brcm_patchram_buf;
 #else
-    const cyw43_firmware_details_t *firmware_details = cyw43_firmware_details();
-    fw_data_len = firmware_details->bt_fw_size;
+    const cyw43_firmware_details_t *firmware_details = cyw43_get_firmware_funcs()->firmware_details();
+    fw_data_len = firmware_details->bt_fw_len;
     fw_data_buf = firmware_details->bt_fw_addr;
-    if (cyw43_firmware_funcs()->start_bt_fw && cyw43_firmware_funcs()->start_bt_fw(firmware_details) != 0) {
+    if (cyw43_get_firmware_funcs()->start_bt_fw && cyw43_get_firmware_funcs()->start_bt_fw(firmware_details) != 0) {
         assert(false);
         return CYW43_EIO;
     }
@@ -147,8 +147,8 @@ int cyw43_btbus_init(cyw43_ll_t *self) {
                            p_hex_buf);
 
 #if !CYW43_USE_HEX_BTFW
-    if (cyw43_firmware_funcs()->end) {
-        cyw43_firmware_funcs()->end();
+    if (cyw43_get_firmware_funcs()->end) {
+        cyw43_get_firmware_funcs()->end();
     }
 #endif
 
