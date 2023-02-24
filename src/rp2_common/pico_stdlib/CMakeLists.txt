@@ -33,6 +33,10 @@ if (NOT TARGET pico_stdlib)
         set_target_properties(${TARGET} PROPERTIES PICO_TARGET_STDIO_SEMIHOSTING ${ENABLED})
     endfunction()
 
+    function(pico_enable_stdio_bt TARGET ENABLED)
+        set_target_properties(${TARGET} PROPERTIES PICO_TARGET_STDIO_BT ${ENABLED})
+    endfunction()
+
     if (TARGET pico_stdio_uart)
         target_link_libraries(pico_stdlib INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_UART>,>,${PICO_STDIO_UART},$<TARGET_PROPERTY:PICO_TARGET_STDIO_UART>>>,pico_stdio_uart,>)
         target_link_libraries(pico_stdlib_headers INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_UART>,>,${PICO_STDIO_UART},$<TARGET_PROPERTY:PICO_TARGET_STDIO_UART>>>,pico_stdio_uart_headers,>)
@@ -46,6 +50,11 @@ if (NOT TARGET pico_stdlib)
     if (TARGET pico_stdio_semihosting)
         target_link_libraries(pico_stdlib INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_SEMIHOSTING>,>,${PICO_STDIO_SEMIHOSTING},$<TARGET_PROPERTY:PICO_TARGET_STDIO_SEMIHOSTING>>>,pico_stdio_semihosting,>)
         target_link_libraries(pico_stdlib_headers INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_SEMIHOSTING>,>,${PICO_STDIO_SEMIHOSTING},$<TARGET_PROPERTY:PICO_TARGET_STDIO_SEMIHOSTING>>>,pico_stdio_semihosting_headers,>)
+    endif()
+
+    if (TARGET pico_stdio_bt)
+        target_link_libraries(pico_stdlib INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_BT>,>,${PICO_STDIO_SEMIHOSTING},$<TARGET_PROPERTY:PICO_TARGET_STDIO_BT>>>,pico_stdio_bt,>)
+        target_link_libraries(pico_stdlib_headers INTERFACE $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_BT>,>,${PICO_STDIO_SEMIHOSTING},$<TARGET_PROPERTY:PICO_TARGET_STDIO_BT>>>,pico_stdio_bt_headers,>)
     endif()
 
 endif()

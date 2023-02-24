@@ -32,6 +32,10 @@
 #include "pico/stdio_semihosting.h"
 #endif
 
+#if LIB_PICO_STDIO_BT
+#include "pico/stdio_bt.h"
+#endif
+
 #define STDIO_HANDLE_STDIN  0
 #define STDIO_HANDLE_STDOUT 1
 #define STDIO_HANDLE_STDERR 2
@@ -298,6 +302,11 @@ bool stdio_init_all(void) {
 #if LIB_PICO_STDIO_USB
     rc |= stdio_usb_init();
 #endif
+
+#if LIB_PICO_STDIO_BT
+    rc |= stdio_bt_init();
+#endif
+
     return rc;
 }
 
