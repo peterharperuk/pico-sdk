@@ -179,10 +179,6 @@ void cyw43_post_poll_hook(void);
 
 #define CYW43_POST_POLL_HOOK cyw43_post_poll_hook();
 
-#ifndef CYW43_FLASH_BLOCK_SIZE
-#define CYW43_FLASH_BLOCK_SIZE FLASH_PAGE_SIZE
-#endif
-
 #ifdef __cplusplus
 }
 #endif
