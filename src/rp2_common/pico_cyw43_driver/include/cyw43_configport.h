@@ -179,6 +179,10 @@ void cyw43_post_poll_hook(void);
 
 #define CYW43_POST_POLL_HOOK cyw43_post_poll_hook();
 
+// Allow malloc and free to be changed
+#define cyw43_alloc malloc
+#define cyw43_free free
+
 #ifdef __cplusplus
 }
 #endif
