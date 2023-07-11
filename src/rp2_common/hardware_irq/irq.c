@@ -56,6 +56,11 @@ bool irq_is_enabled(uint num) {
     return 0 != ((1u << num) & *((io_rw_32 *) (PPB_BASE + M0PLUS_NVIC_ISER_OFFSET)));
 }
 
+uint32_t irq_get_enabled(void)
+{
+    return *((io_rw_32 *)(PPB_BASE + M0PLUS_NVIC_ISER_OFFSET));
+}
+
 void irq_set_mask_enabled(uint32_t mask, bool enabled) {
     if (enabled) {
         // Clear pending before enable

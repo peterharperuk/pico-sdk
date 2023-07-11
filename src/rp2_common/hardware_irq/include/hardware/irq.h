@@ -176,6 +176,13 @@ void irq_set_enabled(uint num, bool enabled);
  */
 bool irq_is_enabled(uint num);
 
+/*! \brief Determine which interrupts are currently enabled
+ *  \ingroup hardware_irq
+ *
+ * \return 32-bit mask of the interrupt enabled status 
+ */
+uint32_t irq_get_enabled(void);
+
 /*! \brief Enable/disable multiple interrupts on the executing core
  *  \ingroup hardware_irq
  *
