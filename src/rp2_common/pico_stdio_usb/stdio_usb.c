@@ -56,8 +56,11 @@ static int64_t timer_task(__unused alarm_id_t id, __unused void *user_data) {
 
 static void low_priority_worker_irq(void) {
     if (mutex_try_enter(&stdio_usb_mutex, NULL)) {
+        uint32_t chars_avail;
         tud_task();
+        chars_avail = tud_cdc_available();
         mutex_exit(&stdio_usb_mutex);
+        if (chars_avail)  chars_available_callback(chars_available_param);
     } else {
         // if the mutex is already owned, then we are in non IRQ code in this file.
         //
@@ -147,12 +150,6 @@ int stdio_usb_in_chars(char *buf, int length) {
 }
 
 #if PICO_STDIO_USB_SUPPORT_CHARS_AVAILABLE_CALLBACK
-void tud_cdc_rx_cb(__unused uint8_t itf) {
-    if (chars_available_callback) {
-        usbd_defer_func(chars_available_callback, chars_available_param, false);
-    }
-}
-
 void stdio_usb_set_chars_available_callback(void (*fn)(void*), void *param) {
     chars_available_callback = fn;
     chars_available_param = param;
