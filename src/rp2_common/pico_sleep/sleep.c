@@ -103,7 +103,8 @@ void sleep_run_from_dormant_source(dormant_source_t dormant_source) {
 }
 
 // Go to sleep until woken up by the RTC
-void sleep_goto_sleep_until(datetime_t *t, rtc_callback_t callback) {
+void sleep_goto_sleep_until(datetime_t *t, rtc_callback_t callback)
+{
     // We should have already called the sleep_run_from_dormant_source function
     assert(dormant_source_valid(_dormant_source));
 
@@ -120,31 +121,30 @@ void sleep_goto_sleep_until(datetime_t *t, rtc_callback_t callback) {
     __wfi();
 }
 
-void sleep_goto_sleep_for(uint32_t delay_ms, irq_handler_t callback, int *alarm_id)
+void sleep_goto_sleep_for(uint32_t delay_ms, hardware_alarm_callback_t callback, int *alarm_id)
 {
     // We should have already called the sleep_run_from_dormant_source function
     assert(dormant_source_valid(_dormant_source));
 
-    //Turn off all clocks except for the timer
+    // Turn off all clocks except for the timer
     clocks_hw->sleep_en0 = 0x0;
     clocks_hw->sleep_en1 = CLOCKS_SLEEP_EN1_CLK_SYS_TIMER_BITS;
 
     int alarm_num = hardware_alarm_claim_unused(true);
 
-    //Get the timer alarm irq number (0..3) so it can be disabled and freed from the main program
+    // Return the timer alarm irq number (0..3) so it can be disabled and freed from the main program
     *alarm_id = alarm_num;
 
     uart_default_tx_wait_blocking();
 
-    //Enable the alarm interrupts
-    hw_set_bits(&timer_hw->inte, 1u << alarm_num);
-    irq_set_enabled(alarm_num, true);
-    irq_set_exclusive_handler(alarm_num, callback);
-
-    //Get the target time based on the current time
-    uint64_t target = timer_hw->timerawl + delay_ms*1000; //add to the lower 32 bits
-    //Write to the alarm register
-    timer_hw->alarm[alarm_num] = (uint32_t) target;
+    hardware_alarm_set_callback(alarm_num, callback);
+    absolute_time_t t = make_timeout_time_ms(delay_ms);
+    if (hardware_alarm_set_target(alarm_num, t)) {
+        hardware_alarm_set_callback(alarm_num, NULL);
+        hardware_alarm_unclaim(alarm_num);
+        *alarm_id = -1;
+        return;
+    }
 
     uint save = scb_hw->scr;
     // Enable deep sleep at the proc
@@ -152,7 +152,6 @@ void sleep_goto_sleep_for(uint32_t delay_ms, irq_handler_t callback, int *alarm_
 
     // Go to sleep
     __wfi();
-
 }
 
 static void _go_dormant(void) {

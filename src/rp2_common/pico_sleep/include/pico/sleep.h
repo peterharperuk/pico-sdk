@@ -78,7 +78,7 @@ to allow for shorter duration sleeps.
  * \param delay_ms The duration to sleep for in milliseconds.
  * \param callback Function to call on wakeup.
  */
-void sleep_goto_sleep_for(uint32_t delay_ms, irq_handler_t callback, int* alarm_id);
+void sleep_goto_sleep_for(uint32_t delay_ms, hardware_alarm_callback_t callback, int* alarm_id);
 
 /*! \brief Send system to dormant until the specified time, note RTC must be driven by an external clock
  *  \ingroup hardware_sleep
