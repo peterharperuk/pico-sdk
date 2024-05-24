@@ -189,3 +189,9 @@ void rtc_disable_alarm(void) {
         tight_loop_contents();
     }
 }
+
+void rtc_run_from_external_source(uint src_hz, uint gpio_pin)
+{
+    assert(gpio_pin == 20 | gpio_pin == 22);
+    clock_configure_gpin(clk_rtc, gpio_pin, src_hz, 46875);
+}
