@@ -63,7 +63,7 @@ void rosc_set_dormant(void);
 /*! \brief Re-enable the ring oscillator so that the processor cores can wake up after sleep/dormant mode
     \ingroup hardware_sleep
 
-    This must be called at the end of the sleeping period (e.g., in an interrupt service routine) 
+    This must be called at the end of the sleeping period (e.g., in an interrupt service routine)
 */
 void rosc_restart(void);
 

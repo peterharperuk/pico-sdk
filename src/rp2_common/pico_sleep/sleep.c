@@ -69,8 +69,8 @@ void sleep_run_from_dormant_source(dormant_source_t dormant_source) {
     clock_stop(clk_usb);
 
     // CLK RTC = ideally XOSC (12MHz) / 256 = 46875Hz but could be rosc
-    uint clk_rtc_src = (dormant_source == DORMANT_SOURCE_XOSC) ? 
-                       CLOCKS_CLK_RTC_CTRL_AUXSRC_VALUE_XOSC_CLKSRC : 
+    uint clk_rtc_src = (dormant_source == DORMANT_SOURCE_XOSC) ?
+                       CLOCKS_CLK_RTC_CTRL_AUXSRC_VALUE_XOSC_CLKSRC :
                        CLOCKS_CLK_RTC_CTRL_AUXSRC_VALUE_ROSC_CLKSRC_PH;
 
     clock_configure(clk_rtc,
@@ -108,7 +108,7 @@ void sleep_goto_sleep_until(datetime_t *t, rtc_callback_t callback) {
     assert(dormant_source_valid(_dormant_source));
 
     clocks_hw->sleep_en0 = CLOCKS_SLEEP_EN0_CLK_RTC_RTC_BITS;
-    clocks_hw->sleep_en1 = 0x0; 
+    clocks_hw->sleep_en1 = 0x0;
 
     rtc_set_alarm(t, callback);
 
@@ -141,7 +141,7 @@ void sleep_goto_sleep_for(uint32_t delay_ms, irq_handler_t callback, int *alarm_
     irq_set_enabled(alarm_num, true);
     irq_set_exclusive_handler(alarm_num, callback);
 
-    //Get the target time based on the current time 
+    //Get the target time based on the current time
     uint64_t target = timer_hw->timerawl + delay_ms*1000; //add to the lower 32 bits
     //Write to the alarm register
     timer_hw->alarm[alarm_num] = (uint32_t) target;
@@ -166,7 +166,7 @@ static void _go_dormant(void) {
 }
 
 void sleep_goto_dormant_until(datetime_t *t, rtc_callback_t callback, uint src_hz, uint gpio_pin)   {
-    // We should have already called the sleep_run_from_dormant_source function 
+    // We should have already called the sleep_run_from_dormant_source function
 
     //The RTC must be run from an external source, since the dormant source will be inactive
     rtc_run_from_external_source(src_hz, gpio_pin);
@@ -212,7 +212,7 @@ void sleep_goto_dormant_until_pin(uint gpio_pin, bool edge, bool high) {
 
 //To be called after waking up from sleep/dormant mode to restore system clocks properly
 void sleep_power_up(void)
-{   
+{
     //Re-enable the ring oscillator, which will essentially kickstart the proc
     rosc_restart();
 
@@ -222,7 +222,7 @@ void sleep_power_up(void)
 
     //Restore all clocks
     clocks_init();
-    
+
     //UART needs to be reinitialised with the new clock frequencies for stable output
     setup_default_uart();
 }

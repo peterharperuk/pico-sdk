@@ -179,7 +179,7 @@ bool irq_is_enabled(uint num);
 /*! \brief Determine which interrupts are currently enabled
  *  \ingroup hardware_irq
  *
- * \return 32-bit mask of the interrupt enabled status 
+ * \return 32-bit mask of the interrupt enabled status
  */
 uint32_t irq_get_enabled(void);
 
