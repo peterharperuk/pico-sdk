@@ -85,6 +85,15 @@ function(pico_add_extra_outputs TARGET)
     if (NOT (PICO_NO_UF2 OR PICO_NO_PICOTOOL))
         pico_add_uf2_output(${TARGET})
     endif()
+
+    if (DEFINED ENV{PICO_MAKE_OZONE_PROJECT})
+        set(OZONE_PROJECT_FILE $<IF:$<BOOL:$<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>>,$<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>,$<TARGET_PROPERTY:${TARGET},NAME>>.jdebug)
+        set(OZONE_PROJECT_PY ${PICO_SDK_PATH}/tools/generate_ozone_project.py)
+        add_custom_command(TARGET ${TARGET} POST_BUILD
+                COMMAND python ${OZONE_PROJECT_PY} ${PICO_PLATFORM} $<TARGET_FILE:${TARGET}> ${OZONE_PROJECT_FILE}
+                VERBATIM)
+    endif()
+
 endfunction()
 
 # PICO_CMAKE_CONFIG: PICO_NO_HARDWARE, Option as to whether the build is not targeting an RP2040 or RP2350 device, type=bool, default=1 when PICO_PLATFORM is host, 0 otherwise, group=build
