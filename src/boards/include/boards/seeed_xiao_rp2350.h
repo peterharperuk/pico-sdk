@@ -54,6 +54,10 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define PICO_DEFAULT_WS2812_POWER_PIN 23
 #endif
 
+#ifndef PICO_DEFAULT_LED_PIN_INVERTED
+#define PICO_DEFAULT_LED_PIN_INVERTED 1
+#endif
+
 //------------- I2C -------------//
 #ifndef PICO_DEFAULT_I2C
 #define PICO_DEFAULT_I2C 1
