@@ -9,11 +9,17 @@
 
 include(${PICO_BTSTACK_PATH}/tool/cmake/BTstack.cmake)
 
-# pico_btstack_add_groups(TARGET GROUP...)
+# pico_btstack_add_groups(TARGET GROUP... [EXCLUDE GROUP...])
 # Add the sources of the given BTstack source groups (and their dependencies)
 # to an SDK interface library, and their include directories to TARGET_headers.
+# Groups listed after EXCLUDE are left out even if they are dependencies, for
+# groups the SDK provides or adds conditionally itself.
 function(pico_btstack_add_groups TARGET)
-    btstack_resolve_groups(groups GROUPS ${ARGN})
+    cmake_parse_arguments(ARG "" "" "EXCLUDE" ${ARGN})
+    btstack_resolve_groups(groups GROUPS ${ARG_UNPARSED_ARGUMENTS})
+    if (ARG_EXCLUDE)
+        list(REMOVE_ITEM groups ${ARG_EXCLUDE})
+    endif()
     btstack_collect_sources(sources GROUPS ${groups})
     btstack_collect_include_directories(include_dirs GROUPS ${groups})
     btstack_collect_consumer_include_directories(consumer_include_dirs GROUPS ${groups})
@@ -31,28 +37,26 @@ pico_btstack_add_groups(pico_btstack_base
     third-party-yxml
     platform-embedded-tlv-flash-bank
     platform-embedded-hci-dump-stdout
+    platform-embedded-hci-dump-segger-rtt
+    # The SEGGER RTT core is added below, only when pico_stdio_rtt doesn't provide it
+    EXCLUDE third-party-segger-rtt-core
 )
 btstack_collect_public_include_directories(BTSTACK_PUBLIC_INCLUDE_DIRS)
 target_include_directories(pico_btstack_base_headers SYSTEM INTERFACE
     ${BTSTACK_PUBLIC_INCLUDE_DIRS}
     ${PICO_BTSTACK_PATH}/
     ${PICO_BTSTACK_PATH}/platform/embedded
-    ${PICO_BTSTACK_PATH}/3rd-party/segger-rtt
 )
-# The third-party-segger-rtt group also contains SEGGER_RTT_Syscalls_GCC.c, which
-# would replace the C library's _write, and SEGGER_RTT.c, which pico_stdio_rtt
-# already provides. So pick the files needed for BTstack's RTT support by hand.
 target_sources(pico_btstack_base INTERFACE
-    ${PICO_BTSTACK_PATH}/platform/embedded/hci_dump_segger_rtt_stdout.c
-    ${PICO_BTSTACK_PATH}/3rd-party/segger-rtt/SEGGER_RTT_printf.c
     ${CMAKE_CURRENT_LIST_DIR}/btstack_stdin_pico.c
 )
 
 # pico-sdk now supports RTT using pico_enable_stdio_rtt in your cmake file or -DPICO_STDIO_RTT=1 on the command line
 # Then the output of printf goes to RTT. But if you define ENABLE_SEGGER_RTT=1 it will use the btstack functionality to use RTT
 # and we'll have to add the source file it requires.
+btstack_collect_sources(BTSTACK_SEGGER_RTT_SOURCES GROUPS third-party-segger-rtt-core)
 target_sources(pico_btstack_base INTERFACE
-    $<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_RTT>,>,${PICO_STDIO_RTT},$<TARGET_PROPERTY:PICO_TARGET_STDIO_RTT>>>,,${PICO_BTSTACK_PATH}/3rd-party/segger-rtt/SEGGER_RTT.c>
+    "$<IF:$<BOOL:$<IF:$<STREQUAL:$<TARGET_PROPERTY:PICO_TARGET_STDIO_RTT>,>,${PICO_STDIO_RTT},$<TARGET_PROPERTY:PICO_TARGET_STDIO_RTT>>>,,${BTSTACK_SEGGER_RTT_SOURCES}>"
 )
 
 pico_add_library(pico_btstack_ble)
@@ -102,13 +106,5 @@ pico_mirrored_target_link_libraries(pico_btstack_sbc_decoder INTERFACE pico_btst
 
 pico_add_library(pico_btstack_bnep_lwip NOFLAG)
 pico_btstack_add_groups(pico_btstack_bnep_lwip
-    bnep
-)
-# The lwip-platform group also contains BTstack's own lwIP sys_arch.c, which
-# must not be used with the SDK's lwIP integration, so add bnep_lwip.c by hand.
-target_sources(pico_btstack_bnep_lwip INTERFACE
-    ${PICO_BTSTACK_PATH}/platform/lwip/bnep_lwip.c
-)
-target_include_directories(pico_btstack_bnep_lwip_headers SYSTEM INTERFACE
-    ${PICO_BTSTACK_PATH}/platform/lwip
+    bnep-lwip
 )
